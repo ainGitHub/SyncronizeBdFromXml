@@ -20,7 +20,7 @@ public class TableTest {
 
 
     public static void main(String[] args) {
-
+        findAllTest();
     }
 
     public static void delteTest() {
@@ -49,7 +49,6 @@ public class TableTest {
             for (Department department : departmentDao.findAll()) {
                 System.out.println(department.getId());
             }
-            System.out.println("Here");
         } catch (DaoException e) {
             e.printStackTrace();
         }

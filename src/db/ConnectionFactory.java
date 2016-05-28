@@ -13,7 +13,7 @@ public class ConnectionFactory {
 
 
     private ConnectionFactory() {
-        config = ResourceBundle.getBundle("resources/db");
+        config = ResourceBundle.getBundle("db");
     }
 
 
