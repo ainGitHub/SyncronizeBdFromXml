@@ -20,6 +20,21 @@ public class TableTest {
 
 
     public static void main(String[] args) {
+
+    }
+
+    public static void createTest() {
+        DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
+        Department department = new Department("dep1", "job1", "Description");
+
+        try {
+            departmentDao.create(department);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void findAllTest() {
         DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
         try {
             for (Department department : departmentDao.findAll()) {

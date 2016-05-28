@@ -14,6 +14,7 @@ import java.util.List;
 
 public class DepartmentDaoImpl implements DepartmentDao {
     private static final String SQL_DEPARTMENTS = "SELECT * FROM department";
+    private static final String SQL_CREATE_DEPARTMENT = "INSERT INTO department (depcode, depjob, description) VALUES (?, ?, ?)";
 
 
     @Override
@@ -52,7 +53,24 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public void create(Department department) throws DaoException {
+        try {
+            Connection connection = ConnectionFactory.getInstance().getConnection();
+            PreparedStatement statement = connection.prepareStatement(SQL_CREATE_DEPARTMENT); // Ctr + 1 (atalho)
+            statement.setString(1, department.getDepCode());
+            statement.setString(2, department.getDepJob());
+            statement.setString(3, department.getDescription());
 
+            boolean result = statement.execute();
+            if (result) {
+                System.out.println("Data was insert successfully!!!");
+            }
+            connection.close();
+
+        } catch (Exception e) {
+            System.out.println("Failure");
+            //throw new NotUniqueFieldsException
+            //throw new PersistenceExceptions(e.getMessage(), e);
+        }
     }
 
     @Override
