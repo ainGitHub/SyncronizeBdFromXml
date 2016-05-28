@@ -95,7 +95,28 @@ public class DepartmentDaoImpl implements DepartmentDao {
     }
 
     @Override
-    public void update(Department department) throws DaoException {
+    public void update(Department newDepartment) throws DaoException {
+        try {
+            Connection connection = ConnectionFactory.getInstance().getConnection();
+            String sql = "UPDATE department SET"
+                    + " depcode = ?, "
+                    + " depjob = ?,"
+                    + " description = ?,"
+                    + " WHERE (id) = ?";
 
+
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, newDepartment.getDepCode());
+            statement.setString(2, newDepartment.getDepJob());
+            statement.setString(3, newDepartment.getDescription());
+            statement.setLong(4, newDepartment.getId());
+
+            statement.execute();
+            connection.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //throw new PersistenceExceptions(e.getMessage(), e);
+        }
     }
 }
