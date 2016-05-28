@@ -75,7 +75,18 @@ public class DepartmentDaoImpl implements DepartmentDao {
 
     @Override
     public void delete(Long id) throws DaoException {
+        try {
+            Connection connection = ConnectionFactory.getInstance().getConnection();
+            String sql = "DELETE FROM department WHERE id=?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setLong(1, id);
+            statement.execute();
+            connection.close();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            //throw new PersistenceExceptions(e.getMessage(), e);
+        }
     }
 
     @Override

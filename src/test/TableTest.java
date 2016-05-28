@@ -23,6 +23,15 @@ public class TableTest {
 
     }
 
+    public static void delteTest() {
+        DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
+        try {
+            departmentDao.delete(4l);
+        } catch (DaoException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void createTest() {
         DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
         Department department = new Department("dep1", "job1", "Description");

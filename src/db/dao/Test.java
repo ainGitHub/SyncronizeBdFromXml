@@ -1,34 +1,7 @@
 package db.dao;
 
 public class Test {
-/*    @Override
-    public void insert(PessoaDTO pessoaDTO) throws PersistenceExceptions {
-
-
-        try {
-            Connection connection = ConexaoUtil.getInstance().getConnection();
-            String sql = "INSERT INTO tb_pessoa (nome, cpf, endereco, sexo, dt_nasc) "
-                    + "VALUES (?, ?, ?, ?, ?)"; // Avoid Injection
-
-            PreparedStatement statement = connection.prepareStatement(sql); // Ctr + 1 (atalho)
-            statement.setString(1, pessoaDTO.getNome());
-            statement.setLong(2, pessoaDTO.getCpf());
-            statement.setString(3, pessoaDTO.getEndereco());
-            statement.setString(4, String.valueOf(pessoaDTO.getSexo()));
-            statement.setDate(5, new Date(pessoaDTO.getDtNasc().getTime()));
-
-            boolean result = statement.execute();
-            if (result) {
-                System.out.println("Data was insert successfully!!!");
-            }
-            connection.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new PersistenceExceptions(e.getMessage(), e);
-        }
-
-    }
+/*
 
     @Override
     public void update(PessoaDTO pessoaDTO) throws PersistenceExceptions {
