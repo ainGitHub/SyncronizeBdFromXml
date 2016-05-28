@@ -1,3 +1,5 @@
+package test;
+
 import db.ConnectionFactory;
 import db.dao.DaoException;
 import db.dao.impl.DepartmentDaoImpl;
@@ -7,7 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Main {
+public class TableTest {
     private final static String createTableQuery = "CREATE TABLE department (" +
             "  id BIGSERIAL PRIMARY KEY ," +
             "  DepCode VARCHAR(20) DEFAULT NULL," +
