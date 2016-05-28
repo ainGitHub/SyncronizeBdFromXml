@@ -31,8 +31,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
                 Department department = new Department();
                 department.setId(resultSet.getLong("id"));
                 department.setDepCode(resultSet.getString("depcode"));
-                department.setDepCode(resultSet.getString("depjob"));
-                department.setDepCode(resultSet.getString("description"));
+                department.setDepJob(resultSet.getString("depjob"));
+                department.setDescription(resultSet.getString("description"));
                 departments.add(department);
             }
         } catch (SQLException e) {

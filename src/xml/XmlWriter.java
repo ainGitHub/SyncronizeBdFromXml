@@ -30,7 +30,7 @@ public class XmlWriter {
 
 
     private Element createDepartmentElement(Department department) {
-        Element departmentElement = document.createElement("departmetn");
+        Element departmentElement = document.createElement("department");
 
         Element depcode = document.createElement("depcode");
         depcode.appendChild(document.createTextNode(department.getDepCode()));
@@ -41,7 +41,10 @@ public class XmlWriter {
         departmentElement.appendChild(depjob);
 
         Element description = document.createElement("description");
-        description.appendChild(document.createTextNode(department.getDescription()));
+        if (department.getDescription() == null)
+            description.appendChild(document.createTextNode(""));
+        else
+            description.appendChild(document.createTextNode(department.getDescription()));
         departmentElement.appendChild(description);
 
         return departmentElement;
@@ -66,7 +69,7 @@ public class XmlWriter {
             Transformer transformer = createTransformer();
 
             if (transformer != null) {
-                transforme(transformer, document, fileName);
+                transform(transformer, document, fileName);
             }
         }
     }
@@ -80,13 +83,13 @@ public class XmlWriter {
         }
     }
 
-    private void transforme(Transformer transformer, Document document, String fileName) {
+    private void transform(Transformer transformer, Document document, String fileName) {
         DOMSource source = new DOMSource(document);
         StreamResult result = new StreamResult(new File(fileName));
         try {
             transformer.transform(source, result);
         } catch (TransformerException e) {
-            e.printStackTrace();
+            System.out.println("Can't transform");
         }
     }
 }
