@@ -3,6 +3,7 @@ package xml;
 
 import db.domain.Department;
 import exceptions.NotUniqueElementException;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -17,9 +18,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+
+/**
+ * Класс для считывания данных с файла и преоброзования их к виду Department
+ */
 public class XmlReader {
     private DocumentBuilder documentBuilder;
     private Document document;
+    private static Logger logger;
 
     public void createDocumentBuilder() throws ParserConfigurationException {
         documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -35,10 +41,13 @@ public class XmlReader {
             createDocumentBuilder();
             createDocument(fileName);
         } catch (ParserConfigurationException e) {
+            logger.error(e);
             return null;
         } catch (SAXException e) {
+            logger.error(e);
             return null;
         } catch (IOException e) {
+            logger.error(e);
             return null;
         }
 

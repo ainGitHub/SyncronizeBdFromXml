@@ -1,6 +1,7 @@
 package xml;
 
 import db.domain.Department;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -16,9 +17,14 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.util.List;
 
+
+/**
+ * Класс для обеспечения выгрузки подаваемых данных в xml файл
+ */
 public class XmlWriter {
     private DocumentBuilder documentBuilder;
     private Document document;
+    private static Logger logger;
 
     private void createDocumentBuilder() throws ParserConfigurationException {
         documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -89,7 +95,7 @@ public class XmlWriter {
         try {
             transformer.transform(source, result);
         } catch (TransformerException e) {
-            System.out.println("Can't transform");
+            logger.error("Не удалось записать в xml файл");
         }
     }
 }
