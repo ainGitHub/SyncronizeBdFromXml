@@ -2,11 +2,15 @@ import db.dao.DaoException;
 import db.dao.DepartmentDao;
 import db.dao.impl.DepartmentDaoImpl;
 import db.domain.Department;
+import db.services.SynchronizedService;
+import exceptions.NotUniqueElementException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import xml.XmlReader;
 import xml.XmlWriter;
 
 import java.util.List;
+import java.util.Set;
 
 public class Main {
     private static final String SYNC_CODE = "sync";
@@ -45,7 +49,15 @@ public class Main {
     }
 
     public static void syncDB(String fileName) {
+        XmlReader xmlReader = new XmlReader();
+        try {
+            Set<Department> xmlDepartments = xmlReader.parseXML(fileName);
 
-        rootLogger.info("Synchronized");
+            SynchronizedService synchronizedService = new SynchronizedService();
+            synchronizedService.synchronize(xmlDepartments);
+            rootLogger.info("Synchronized");
+        } catch (NotUniqueElementException e) {
+            rootLogger.error("В файле существует два объекта с одинаковыми натуральными ключами");
+        }
     }
 }
