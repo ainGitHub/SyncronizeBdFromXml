@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import xml.XmlReader;
 import xml.XmlWriter;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +59,8 @@ public class Main {
             rootLogger.info("Synchronized");
         } catch (NotUniqueElementException e) {
             rootLogger.error("В файле существует два объекта с одинаковыми натуральными ключами");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

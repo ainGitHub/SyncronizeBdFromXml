@@ -24,21 +24,31 @@ public class TableTest {
     }
 
     public static void delteTest() {
-        DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
         try {
-            departmentDao.delete(4l);
+            Connection connection = ConnectionFactory.getInstance().getConnection();
+            DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
+            departmentDao.delete(4l, connection);
         } catch (DaoException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     public static void createTest() {
-        DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
         Department department = new Department("dep1", "job1", "Description");
 
         try {
-            departmentDao.create(department);
+            Connection connection = ConnectionFactory.getInstance().getConnection();
+            DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
+            departmentDao.create(department, connection);
         } catch (DaoException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

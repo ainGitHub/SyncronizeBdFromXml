@@ -52,9 +52,8 @@ public class DepartmentDaoImpl implements DepartmentDao {
     }
 
     @Override
-    public void create(Department department) throws DaoException {
+    public void create(Department department, Connection connection) throws DaoException {
         try {
-            Connection connection = ConnectionFactory.getInstance().getConnection();
             PreparedStatement statement = connection.prepareStatement(SQL_CREATE_DEPARTMENT); // Ctr + 1 (atalho)
             statement.setString(1, department.getDepCode());
             statement.setString(2, department.getDepJob());
@@ -64,8 +63,6 @@ public class DepartmentDaoImpl implements DepartmentDao {
             if (result) {
                 System.out.println("Data was insert successfully!!!");
             }
-            connection.close();
-
         } catch (Exception e) {
             System.out.println("Failure");
             //throw new NotUniqueFieldsException
@@ -74,15 +71,12 @@ public class DepartmentDaoImpl implements DepartmentDao {
     }
 
     @Override
-    public void delete(Long id) throws DaoException {
+    public void delete(Long id, Connection connection) throws DaoException {
         try {
-            Connection connection = ConnectionFactory.getInstance().getConnection();
             String sql = "DELETE FROM department WHERE id=?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setLong(1, id);
             statement.execute();
-            connection.close();
-
         } catch (Exception e) {
             e.printStackTrace();
             //throw new PersistenceExceptions(e.getMessage(), e);
@@ -90,19 +84,18 @@ public class DepartmentDaoImpl implements DepartmentDao {
     }
 
     @Override
-    public Department find(Long id) throws DaoException {
+    public Department find(Long id, Connection connection) throws DaoException {
         return null;
     }
 
     @Override
-    public void update(Department newDepartment) throws DaoException {
+    public void update(Department newDepartment, Connection connection) throws DaoException {
         try {
-            Connection connection = ConnectionFactory.getInstance().getConnection();
             String sql = "UPDATE department SET"
                     + " depcode = ?, "
                     + " depjob = ?,"
-                    + " description = ?,"
-                    + " WHERE (id) = ?";
+                    + " description = ?"
+                    + " WHERE id = ?";
 
 
             PreparedStatement statement = connection.prepareStatement(sql);
@@ -112,8 +105,6 @@ public class DepartmentDaoImpl implements DepartmentDao {
             statement.setLong(4, newDepartment.getId());
 
             statement.execute();
-            connection.close();
-
         } catch (Exception e) {
             e.printStackTrace();
             //throw new PersistenceExceptions(e.getMessage(), e);

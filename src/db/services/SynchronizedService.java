@@ -14,7 +14,7 @@ import java.util.Set;
 public class SynchronizedService {
 
 
-    public void synchronize(Set<Department> xmlDepartments) {
+    public void synchronize(Set<Department> xmlDepartments) throws SQLException {
         DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
         List<Department> dbDepartments = null;
         try {
@@ -24,42 +24,56 @@ public class SynchronizedService {
         }
 
 
-        if (xmlDepartments != null && dbDepartments != null) {
-            Iterator xmlIterator = xmlDepartments.iterator();
+        Connection connection = null;
+        try {
+            connection = ConnectionFactory.getInstance().getConnection();
+            connection.setAutoCommit(false);
 
-            while (xmlIterator.hasNext()) {
-                Department xmlDepartment = (Department) xmlIterator.next();
-                boolean xmlDepExist = false;
 
-                Iterator dbIterator = dbDepartments.iterator();
-                while (dbIterator.hasNext()) {
-                    Department dbDepartment = (Department) dbIterator.next();
+            if (xmlDepartments != null && dbDepartments != null) {
+                Iterator xmlIterator = xmlDepartments.iterator();
 
-                    if (xmlDepartment.equals(dbDepartment)) {
-                        xmlDepExist = true;
+                while (xmlIterator.hasNext()) {
+                    Department xmlDepartment = (Department) xmlIterator.next();
+                    boolean xmlDepExist = false;
 
-                        if (!departmentsDescriptionEquals(xmlDepartment, dbDepartment)) {
+                    Iterator dbIterator = dbDepartments.iterator();
+                    while (dbIterator.hasNext()) {
+                        Department dbDepartment = (Department) dbIterator.next();
 
+                        if (xmlDepartment.equals(dbDepartment)) {
+                            xmlDepExist = true;
+
+                            if (!departmentsDescriptionEquals(xmlDepartment, dbDepartment)) {
+                                xmlDepartment.setId(dbDepartment.getId());
+                                departmentDao.update(xmlDepartment, connection);
+                            }
+
+                            dbIterator.remove();
+                            break;
                         }
-
-                        dbIterator.remove();
-                        break;
                     }
 
+                    if (!xmlDepExist) {
+                        System.out.println("Created" + xmlDepartment.getDepCode() + " " + xmlDepartment.getDepJob());
+                        departmentDao.create(xmlDepartment, connection);
+                    }
                 }
 
-                if (!xmlDepExist) {
-                    System.out.println("Created" + xmlDepartment.getDepCode() + " " + xmlDepartment.getDepJob());
-                    //create
+                if (!dbDepartments.isEmpty()) {
+                    for (Department d : dbDepartments) {
+                        System.out.println("Deleted" + d.getDepCode() + " " + d.getDepJob());
+                        departmentDao.delete(d.getId(), connection);
+                    }
                 }
             }
-
-            if (!dbDepartments.isEmpty()) {
-                for (Department d : dbDepartments) {
-                    System.out.println("Deleted" + d.getDepCode() + " " + d.getDepJob());
-                    //delete
-                }
-            }
+            connection.commit();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            connection.rollback();
+        } finally {
+            connection.close();
         }
     }
 
