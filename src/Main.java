@@ -19,6 +19,7 @@ import java.util.Set;
 public class Main {
     private static final String SYNC_CODE = "sync";
     private static final String UPLOAD_CODE = "upload";
+    private static final String SHOW_ALL_DB_CODE = "show";
 
     static final Logger rootLogger = LogManager.getRootLogger();
 
@@ -33,6 +34,9 @@ public class Main {
                     break;
                 case UPLOAD_CODE:
                     uploadDB(fileName);
+                    break;
+                case SHOW_ALL_DB_CODE:
+                    showAll();
                     break;
             }
         }
@@ -78,6 +82,17 @@ public class Main {
         } catch (NotUniqueElementException e) {
             rootLogger.error("В файле существует два объекта с одинаковыми натуральными ключами");
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void showAll() {
+        DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
+        try {
+            for (Department d : departmentDao.findAll()) {
+                System.out.println(d.getId() + " " + d.getDepCode() + " " + d.getDepJob());
+            }
+        } catch (DaoException e) {
             e.printStackTrace();
         }
     }

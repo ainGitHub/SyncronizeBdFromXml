@@ -1,6 +1,5 @@
 package db;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +7,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 /**
- * Синглтон класс, который отдает Connection
+ * РЎРёРЅРіР»С‚РѕРЅ РєР»Р°СЃСЃ, РєРѕС‚РѕСЂС‹Р№ РѕС‚РґР°РµС‚ Connection
  */
 
 public class ConnectionFactory {
@@ -16,10 +15,9 @@ public class ConnectionFactory {
 
     private static Properties properties;
 
-
     private ConnectionFactory() throws IOException {
         properties = new Properties();
-        properties.load(new FileInputStream("resources/db.properties"));
+        properties.load(getClass().getClassLoader().getResourceAsStream("db.properties"));
     }
 
     public static ConnectionFactory getInstance() {

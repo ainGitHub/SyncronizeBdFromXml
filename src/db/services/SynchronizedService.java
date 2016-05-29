@@ -4,6 +4,7 @@ import db.ConnectionFactory;
 import db.dao.DaoException;
 import db.dao.impl.DepartmentDaoImpl;
 import db.domain.Department;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
@@ -14,15 +15,15 @@ import java.util.Set;
 
 
 /**
- * Класс для синхронизации данных с файла и бд
+ * РљР»Р°СЃСЃ РґР»СЏ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё РґР°РЅРЅС‹С… СЃ С„Р°Р№Р»Р° Рё Р±Рґ
  */
 public class SynchronizedService {
-    private Logger logger;
+    private Logger logger = LogManager.getRootLogger();
 
     /**
-     * Основной метод синхронизации
+     * РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ СЃРёРЅС…СЂРѕРЅРёР·Р°С†РёРё
      *
-     * @param xmlDepartments - данные считанные из xml файла
+     * @param xmlDepartments - РґР°РЅРЅС‹Рµ СЃС‡РёС‚Р°РЅРЅС‹Рµ РёР· xml С„Р°Р№Р»Р°
      * @throws SQLException
      */
     public void synchronize(Set<Department> xmlDepartments) throws SQLException {
@@ -43,7 +44,7 @@ public class SynchronizedService {
             if (xmlDepartments != null && dbDepartments != null) {
 
                 for (Department xmlDepartment : xmlDepartments) {
-                    boolean xmlDepExist = false; // флаг для создания нового элемента
+                    boolean xmlDepExist = false; // С„Р»Р°Рі РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р°
 
                     Iterator dbIterator = dbDepartments.iterator();
                     while (dbIterator.hasNext()) {
@@ -63,7 +64,7 @@ public class SynchronizedService {
                     }
 
                     if (!xmlDepExist) {
-                        logger.info("Создание нового элемента");
+                        logger.info("РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ СЌР»РµРјРµРЅС‚Р°");
                         departmentDao.create(xmlDepartment, connection);
                     }
                 }
@@ -72,12 +73,13 @@ public class SynchronizedService {
             }
 
             connection.commit();
-            logger.info("Запись всех изменений в бд");
+            logger.info("Р—Р°РїРёСЃСЊ РІСЃРµС… РёР·РјРµРЅРµРЅРёР№ РІ Р±Рґ");
 
         } catch (ClassNotFoundException e) {
+            logger.info("РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°");
             e.printStackTrace();
         } catch (Exception e) {
-            logger.error("Произошла ошибка, возврат всех изменений");
+            logger.info("РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР°, РІРѕР·РІСЂР°С‚ РІСЃРµС… РёР·РјРµРЅРµРЅРёР№");
             if (connection != null) {
                 connection.rollback();
             }
@@ -91,18 +93,18 @@ public class SynchronizedService {
     private void checkAndDeleteDepartmentsInBd(DepartmentDaoImpl departmentDao, List<Department> dbDepartments, Connection connection) throws DaoException {
         if (!dbDepartments.isEmpty()) {
             for (Department d : dbDepartments) {
-                logger.info("Удаление элемента, которого нет в xml файле");
+                logger.info("РЈРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°, РєРѕС‚РѕСЂРѕРіРѕ РЅРµС‚ РІ xml С„Р°Р№Р»Рµ");
                 departmentDao.delete(d.getId(), connection);
             }
         }
     }
 
     /**
-     * Проверка равентсва описаний(description) двух Department
+     * РџСЂРѕРІРµСЂРєР° СЂР°РІРµРЅС‚СЃРІР° РѕРїРёСЃР°РЅРёР№(description) РґРІСѓС… Department
      *
-     * @param xmlDepartment - из xml
-     * @param dbDepartment  - из бд
-     * @return - true если равны, false если не равны
+     * @param xmlDepartment - РёР· xml
+     * @param dbDepartment  - РёР· Р±Рґ
+     * @return - true РµСЃР»Рё СЂР°РІРЅС‹, false РµСЃР»Рё РЅРµ СЂР°РІРЅС‹
      */
     public boolean departmentsDescriptionEquals(Department xmlDepartment, Department dbDepartment) {
         if (xmlDepartment.getDescription() != null && dbDepartment.getDescription() != null) {
