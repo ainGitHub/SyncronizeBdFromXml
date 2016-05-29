@@ -4,6 +4,7 @@ import db.ConnectionFactory;
 import db.dao.DaoException;
 import db.dao.impl.DepartmentDaoImpl;
 import db.domain.Department;
+import org.apache.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,9 +12,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+
+/**
+ * Класс для синхронизации данных с файла и бд
+ */
 public class SynchronizedService {
+    private Logger logger;
 
-
+    /**
+     * Основной метод синхронизации
+     *
+     * @param xmlDepartments - данные считанные из xml файла
+     * @throws SQLException
+     */
     public void synchronize(Set<Department> xmlDepartments) throws SQLException {
         DepartmentDaoImpl departmentDao = new DepartmentDaoImpl();
         List<Department> dbDepartments = null;
@@ -29,13 +40,10 @@ public class SynchronizedService {
             connection = ConnectionFactory.getInstance().getConnection();
             connection.setAutoCommit(false);
 
-
             if (xmlDepartments != null && dbDepartments != null) {
-                Iterator xmlIterator = xmlDepartments.iterator();
 
-                while (xmlIterator.hasNext()) {
-                    Department xmlDepartment = (Department) xmlIterator.next();
-                    boolean xmlDepExist = false;
+                for (Department xmlDepartment : xmlDepartments) {
+                    boolean xmlDepExist = false; // флаг для создания нового элемента
 
                     Iterator dbIterator = dbDepartments.iterator();
                     while (dbIterator.hasNext()) {
@@ -55,28 +63,47 @@ public class SynchronizedService {
                     }
 
                     if (!xmlDepExist) {
-                        System.out.println("Created" + xmlDepartment.getDepCode() + " " + xmlDepartment.getDepJob());
+                        logger.info("Создание нового элемента");
                         departmentDao.create(xmlDepartment, connection);
                     }
                 }
 
-                if (!dbDepartments.isEmpty()) {
-                    for (Department d : dbDepartments) {
-                        System.out.println("Deleted" + d.getDepCode() + " " + d.getDepJob());
-                        departmentDao.delete(d.getId(), connection);
-                    }
-                }
+                checkAndDeleteDepartmentsInBd(departmentDao, dbDepartments, connection);
             }
+
             connection.commit();
+            logger.info("Запись всех изменений в бд");
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            connection.rollback();
+            logger.error("Произошла ошибка, возврат всех изменений");
+            if (connection != null) {
+                connection.rollback();
+            }
         } finally {
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
+    private void checkAndDeleteDepartmentsInBd(DepartmentDaoImpl departmentDao, List<Department> dbDepartments, Connection connection) throws DaoException {
+        if (!dbDepartments.isEmpty()) {
+            for (Department d : dbDepartments) {
+                logger.info("Удаление элемента, которого нет в xml файле");
+                departmentDao.delete(d.getId(), connection);
+            }
+        }
+    }
+
+    /**
+     * Проверка равентсва описаний(description) двух Department
+     *
+     * @param xmlDepartment - из xml
+     * @param dbDepartment  - из бд
+     * @return - true если равны, false если не равны
+     */
     public boolean departmentsDescriptionEquals(Department xmlDepartment, Department dbDepartment) {
         if (xmlDepartment.getDescription() != null && dbDepartment.getDescription() != null) {
             if (xmlDepartment.getDescription().equals(dbDepartment.getDescription())) {
