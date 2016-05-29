@@ -1,5 +1,8 @@
 package db.domain;
 
+/**
+ * Сущность для данных из таблицы
+ */
 public class Department {
     Long id;
 

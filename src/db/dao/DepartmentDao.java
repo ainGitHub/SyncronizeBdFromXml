@@ -2,9 +2,8 @@ package db.dao;
 
 import db.domain.Department;
 
-import java.util.List;
-
+/**
+ * Интерфейс для Dao работующим с Department
+ */
 public interface DepartmentDao extends GenericDao<Department, Long> {
-    @Override
-    List<Department> findAll() throws DaoException;
 }

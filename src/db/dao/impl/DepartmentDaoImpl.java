@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Класс для работы с бд
+ */
 public class DepartmentDaoImpl implements DepartmentDao {
     private static final String SQL_DEPARTMENTS = "SELECT * FROM department";
     private static final String SQL_CREATE_DEPARTMENT = "INSERT INTO department (depcode, depjob, description) VALUES (?, ?, ?)";
@@ -83,10 +87,6 @@ public class DepartmentDaoImpl implements DepartmentDao {
         }
     }
 
-    @Override
-    public Department find(Long id, Connection connection) throws DaoException {
-        return null;
-    }
 
     @Override
     public void update(Department newDepartment, Connection connection) throws DaoException {
