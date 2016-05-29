@@ -69,14 +69,15 @@ public class Main {
      * @param fileName - название xml файла, с которого будут считаны данные
      */
     public static void syncDB(String fileName) {
-        XmlReader xmlReader = new XmlReader();
         try {
+            XmlReader xmlReader = new XmlReader();
             rootLogger.info("Начало синхронизации");
 
             Set<Department> xmlDepartments = xmlReader.parseXML(fileName);
-
-            SynchronizedService synchronizedService = new SynchronizedService();
-            synchronizedService.synchronize(xmlDepartments);
+            if (xmlDepartments != null) {
+                SynchronizedService synchronizedService = new SynchronizedService();
+                synchronizedService.synchronize(xmlDepartments);
+            }
 
             rootLogger.info("Конец синхронизации");
         } catch (NotUniqueElementException e) {
