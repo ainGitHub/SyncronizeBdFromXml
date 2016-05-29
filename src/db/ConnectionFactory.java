@@ -1,36 +1,40 @@
 package db;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ResourceBundle;
+import java.util.Properties;
+
+/**
+ * Синглтон класс, который отдает Connection
+ */
 
 public class ConnectionFactory {
     private static ConnectionFactory connectionFactory;
 
-    // Instantiate the config file
-    private static ResourceBundle config;
+    private static Properties properties;
 
 
-    private ConnectionFactory() {
-        config = ResourceBundle.getBundle("db");
+    private ConnectionFactory() throws IOException {
+        properties = new Properties();
+        properties.load(new FileInputStream("resources/db.properties"));
     }
 
-
-    //Connection Singleton..
     public static ConnectionFactory getInstance() {
-
         if (connectionFactory == null) {
-            connectionFactory = new ConnectionFactory();
+            try {
+                connectionFactory = new ConnectionFactory();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return connectionFactory;
-
     }
 
-    // Connection with SQL using: java.sql.Connection!
     public Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName(config.getString("jdbc.driver"));
-        return DriverManager.getConnection(config.getString("jdbc.url"), config.getString("jdbc.username"), config.getString("jdbc.password"));
-
+        Class.forName(properties.getProperty("jdbc.driver"));
+        return DriverManager.getConnection(properties.getProperty("jdbc.url"), properties.getProperty("jdbc.username"), properties.getProperty("jdbc.password"));
     }
 }
