@@ -49,4 +49,23 @@ public class Department {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Department that = (Department) o;
+
+        if (depCode != null ? !depCode.equals(that.depCode) : that.depCode != null) return false;
+        return !(depJob != null ? !depJob.equals(that.depJob) : that.depJob != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = depCode != null ? depCode.hashCode() : 0;
+        result = 31 * result + (depJob != null ? depJob.hashCode() : 0);
+        return result;
+    }
 }

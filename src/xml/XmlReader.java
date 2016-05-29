@@ -2,6 +2,7 @@ package xml;
 
 
 import db.domain.Department;
+import exceptions.NotUniqueElementException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -13,8 +14,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class XmlReader {
     private DocumentBuilder documentBuilder;
@@ -29,7 +30,7 @@ public class XmlReader {
     }
 
 
-    public List<Department> parseXML(String fileName) {
+    public Set<Department> parseXML(String fileName) throws NotUniqueElementException {
         try {
             createDocumentBuilder();
             createDocument(fileName);
@@ -45,10 +46,10 @@ public class XmlReader {
         return getDepartments();
     }
 
-    private List<Department> getDepartments() {
+    private Set<Department> getDepartments() throws NotUniqueElementException {
         NodeList childes = document.getElementsByTagName("department");
 
-        List<Department> departments = new ArrayList<>();
+        HashSet<Department> departments = new HashSet<>();
 
         for (int i = 0; i < childes.getLength(); i++) {
             Node node = childes.item(i);
@@ -56,7 +57,9 @@ public class XmlReader {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element element = (Element) node;
 
-                departments.add(createDepartment(element));
+                if (!departments.add(createDepartment(element))) {
+                    throw new NotUniqueElementException();
+                }
             }
         }
 

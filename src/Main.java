@@ -45,6 +45,7 @@ public class Main {
     }
 
     public static void syncDB(String fileName) {
+
         rootLogger.info("Synchronized");
     }
 }
